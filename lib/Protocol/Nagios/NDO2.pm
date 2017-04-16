@@ -9,12 +9,24 @@ package Protocol::Nagios::NDO2 0.1;
 
 use Navel::Base;
 
+use constant END_OF_DATA_FLAG => 999;
+
 use Protocol::Nagios::NDO2::Data;
 
 use Navel::Utils qw/
     croak
     blessed
 /;
+
+#-> export
+
+our @EXPORT_OK = qw/
+    END_OF_DATA_FLAG
+/;
+
+our %EXPORT_TAGS = (
+    all => \@EXPORT_OK
+);
 
 #-> methods
 
@@ -58,7 +70,7 @@ sub decode_data {
         length;
     } split /\n/, $raw_data;
 
-    croak('incorrect packet') unless @raw_data > 2 && $raw_data[0] =~ /^(\d+):$/ && $raw_data[-1] eq '999';
+    croak('incorrect packet') unless @raw_data > 2 && $raw_data[0] =~ /^(\d+):$/ && $raw_data[-1] eq END_OF_DATA_FLAG;
 
     my $type = $1;
 
